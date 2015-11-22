@@ -1,0 +1,40 @@
+#!/usr/bin/env sh
+
+set -ex
+
+GIFSERVERIP=172.16.8.2
+GIFSERVERNAME=depot.ptb2.me
+
+if [ ! -f "/tmp/hosts.block" ]; then
+  echo -e "${GIFSERVERIP}\t${GIFSERVERNAME}" > /tmp/hosts.block \
+  && wget -qO- \
+    http://winhelp2002.mvps.org/hosts.txt \
+    http://www.malwaredomainlist.com/hostslist/hosts.txt \
+    http://hosts-file.net/ad_servers.txt \
+    http://hosts-file.net/emd.txt \
+    http://hosts-file.net/exp.txt \
+    http://hosts-file.net/fsa.txt \
+    http://hosts-file.net/grm.txt \
+    http://hosts-file.net/hjk.txt \
+    http://hosts-file.net/mmt.txt \
+    http://hosts-file.net/pha.txt \
+    http://hosts-file.net/psh.txt \
+    http://adaway.org/hosts.txt \
+  | sed -r \
+    -e "/^127\.0\.0\.1/!d" \
+    -e "/localhost|feeds\.feedburner\.com|thesaurus\.com/d" \
+    -e "s/^127\.0\.0\.1\s*//" \
+    -e "s/#.*$//" \
+    -e "s/\s*$//" \
+    -e "s/\.$//" \
+  | tr [:upper:] [:lower:] \
+  | awk -F "." '{for(i=NF; i > 1; i--) printf "%s.", $i; print $1}' \
+  | sort -fn \
+  | awk -F "." '{for(i=NF; i > 1; i--) printf "%s.", $i; print $1}' \
+  | sed -e "s/^/$GIFSERVERIP\t/" \
+  | uniq \
+  >> /tmp/hosts.block
+fi
+
+/bin/echo "nameserver 127.0.0.1" > /etc/resolv.conf
+exec /usr/sbin/dnsmasq --keep-in-foreground
