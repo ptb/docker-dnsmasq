@@ -1,19 +1,21 @@
 FROM alpine:3.2
 # MAINTAINER Peter T Bosse II <ptb@ioutime.com>
 
-RUN apk add --update-cache \
-    dnsmasq \
-    wget \
+RUN \
+  REQUIRED_PACKAGES="dnsmasq" \
+  && BUILD_PACKAGES="ca-certificates openssl wget" \
+
+  && apk add --update-cache \
+    $REQUIRED_PACKAGES \
+    $BUILD_PACKAGES \
 
   && wget \
-    --no-check-certificate \
     --output-document - \
     --quiet \
     https://api.github.com/repos/just-containers/s6-overlay/releases/latest \
     | sed -n "s/^.*browser_download_url.*: \"\(.*s6-overlay-amd64.tar.gz\)\".*/\1/p" \
     | wget \
       --input-file - \
-      --no-check-certificate \
       --output-document - \
       --quiet \
     | tar xz -C / \
@@ -21,8 +23,8 @@ RUN apk add --update-cache \
   && mkdir -p /etc/services.d/dnsmasq/ \
 
   && apk del \
-    wget \
-  && rm -rf /tmp/* /var/cache/apk/*
+    $BUILD_PACKAGES \
+  && rm -rf /tmp/* /var/cache/apk/* /var/tmp/*
 
 COPY ["run", "/etc/services.d/dnsmasq/"]
 ENTRYPOINT ["/init"]
