@@ -21,12 +21,16 @@ RUN \
     | tar xz -C / \
 
   && mkdir -p /etc/services.d/dnsmasq/ \
+  && wget \
+    --output-document /etc/services.d/dnsmasq/run \
+    --quiet \
+    https://github.com/ptb/docker-dnsmasq/raw/master/run \
+  && chmod +x /etc/services.d/dnsmasq/run \
 
   && apk del \
     $BUILD_PACKAGES \
   && rm -rf /tmp/* /var/cache/apk/* /var/tmp/*
 
-COPY ["run", "/etc/services.d/dnsmasq/"]
 ENTRYPOINT ["/init"]
 EXPOSE 53 53/udp 67/udp
 
@@ -35,5 +39,5 @@ EXPOSE 53 53/udp 67/udp
 #   --publish 53:53/tcp \
 #   --publish 53:53/udp \
 #   --publish 67:67/udp \
-#   --volume /volume1/@appstore/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf \
+#   --volume /volume1/Config/dnsmasq:/home/dnsmasq \
 #   ptb2/dnsmasq
