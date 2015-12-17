@@ -37,4 +37,4 @@ if [ ! -f "/home/dnsmasq/hosts.block" ]; then
 fi
 
 /bin/echo "nameserver 127.0.0.1" > /etc/resolv.conf
-exec /usr/sbin/dnsmasq --conf-file /home/dnsmasq/dnsmasq.conf --keep-in-foreground
+exec /usr/sbin/dnsmasq --conf-file=/home/dnsmasq/dnsmasq.conf --keep-in-foreground
