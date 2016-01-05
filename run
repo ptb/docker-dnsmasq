@@ -22,7 +22,7 @@ if [ ! -f "/home/dnsmasq/hosts.block" ]; then
     http://adaway.org/hosts.txt \
   | sed -r \
     -e "/^127\.0\.0\.1/!d" \
-    -e "/localhost|feedburner\.com|highcharts\.com|jsfiddle\.net|thesaurus\.com/d" \
+    -e "/localhost|\t(www\.)?copy\.com|feedburner\.com|highcharts\.com|jsfiddle\.net|thesaurus\.com/d" \
     -e "s/^127\.0\.0\.1\s*//" \
     -e "s/#.*$//" \
     -e "s/\s*$//" \
